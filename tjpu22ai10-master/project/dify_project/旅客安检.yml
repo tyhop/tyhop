@@ -1,0 +1,285 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: 旅客安检
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.0.46@8e73008929dbc3934936493d442fab4c34ef016ae817b144b45da278ba76580e
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.6@dd589dc093c8084925858034ab5ec1fdf0d33819f43226c2f8c4a749a9acbbb2
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: template-transform
+      id: 1758807488344-source-1758807515863-target
+      source: '1758807488344'
+      sourceHandle: source
+      target: '1758807515863'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1758807533591-source-1758807538795-target
+      source: '1758807533591'
+      sourceHandle: source
+      target: '1758807538795'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: knowledge-retrieval
+      id: 1758807515863-source-1758807625273-target
+      source: '1758807515863'
+      sourceHandle: source
+      target: '1758807625273'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1758807625273-source-1758807533591-target
+      source: '1758807625273'
+      sourceHandle: source
+      target: '1758807533591'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 行李
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: baggage_list
+        - label: 携带方式
+          max_length: 48
+          options:
+          - 托运
+          - 随身携带
+          required: true
+          type: select
+          variable: baggage_type
+      height: 115
+      id: '1758807488344'
+      position:
+        x: 214.7217966811777
+        y: 169.73010342001498
+      positionAbsolute:
+        x: 214.7217966811777
+        y: 169.73010342001498
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        selected: false
+        template: 通过{{type}}的形式携带{{list}}
+        title: 模板转换
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1758807488344'
+          - baggage_list
+          value_type: string
+          variable: list
+        - value_selector:
+          - '1758807488344'
+          - baggage_type
+          value_type: string
+          variable: type
+      height: 53
+      id: '1758807515863'
+      position:
+        x: 607.04011370375
+        y: 203.04374536238763
+      positionAbsolute:
+        x: 607.04011370375
+        y: 203.04374536238763
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1758807625273'
+          - result
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: 175586e7-eaa4-4f91-9055-e23dc8e81c81
+          role: system
+          text: '你是一名机场安检人员，需要根据规定给出行李携带意见
+
+            要求：
+
+            1、以HTML格式输出
+
+            2、警示部分用红色字体输出'
+        - id: a7a0d9d0-e323-4326-9f5c-81dc78100459
+          role: user
+          text: '请针对打算携带的行李{{#1758807488344.baggage_list#}}，给出携
+
+            带意见，明确指明，我打算携带的物品是通过随身携带
+
+            的形式还是通过托运的形式运输'
+        selected: true
+        title: LLM
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 89
+      id: '1758807533591'
+      position:
+        x: 999.1054453481079
+        y: 238.81396842101844
+      positionAbsolute:
+        x: 999.1054453481079
+        y: 238.81396842101844
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1758807533591'
+          - text
+          value_type: string
+          variable: result
+        selected: false
+        title: 结束
+        type: end
+      height: 90
+      id: '1758807538795'
+      position:
+        x: 999.1054453481079
+        y: 437.1473021409776
+      positionAbsolute:
+        x: 999.1054453481079
+        y: 437.1473021409776
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - x0l6+5K3FFrX8R9g42ssLJDS/F61GaIyDbeGHgaJF0RTkO0+5bm2JmAoXfkSVunr
+        desc: ''
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: gte-rerank
+            provider: langgenius/tongyi/tongyi
+          top_k: 4
+        query_variable_selector:
+        - '1758807515863'
+        - output
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索
+        type: knowledge-retrieval
+      height: 91
+      id: '1758807625273'
+      position:
+        x: 999.1054453481079
+        y: 55.01117731513969
+      positionAbsolute:
+        x: 999.1054453481079
+        y: 55.01117731513969
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: -553.7714179232455
+      y: -19.867907896739098
+      zoom: 1.0000000000000016

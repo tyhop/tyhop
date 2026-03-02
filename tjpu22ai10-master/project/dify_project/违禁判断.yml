@@ -1,0 +1,253 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: 违禁判断
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.6@dd589dc093c8084925858034ab5ec1fdf0d33819f43226c2f8c4a749a9acbbb2
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1758801413173-source-1758801850297-target
+      source: '1758801413173'
+      sourceHandle: source
+      target: '1758801850297'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: knowledge-retrieval
+      id: 1758801410637-source-1758801804835-target
+      source: '1758801410637'
+      sourceHandle: source
+      target: '1758801804835'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: template-transform
+      id: 1758801804835-source-1758849467134-target
+      source: '1758801804835'
+      sourceHandle: source
+      target: '1758849467134'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: template-transform
+        targetType: llm
+      id: 1758849467134-source-1758801413173-target
+      source: '1758849467134'
+      sourceHandle: source
+      target: '1758801413173'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: object
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: object
+      height: 89
+      id: '1758801410637'
+      position:
+        x: -176.15973316433886
+        y: 143.0074990453587
+      positionAbsolute:
+        x: -176.15973316433886
+        y: 143.0074990453587
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: e4178421-0f27-485c-a97d-62c9a4f1aa7a
+          role: system
+          text: 判断{{#1758801410637.object#}}}是否违规
+        selected: false
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 89
+      id: '1758801413173'
+      position:
+        x: 710
+        y: 137
+      positionAbsolute:
+        x: 710
+        y: 137
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - x0l6+5K3FFrX8R9g42ssLJDS/F61GaIyDbeGHgaJF0RTkO0+5bm2JmAoXfkSVunr
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: ''
+            provider: ''
+          top_k: 4
+        query_variable_selector:
+        - '1758801410637'
+        - object
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索
+        type: knowledge-retrieval
+      height: 91
+      id: '1758801804835'
+      position:
+        x: 118.16369644571455
+        y: -11.665393074807284
+      positionAbsolute:
+        x: 118.16369644571455
+        y: -11.665393074807284
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        outputs:
+        - value_selector:
+          - '1758801413173'
+          - text
+          value_type: string
+          variable: content
+        selected: true
+        title: 结束
+        type: end
+      height: 90
+      id: '1758801850297'
+      position:
+        x: 1241
+        y: 300
+      positionAbsolute:
+        x: 1241
+        y: 300
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        selected: false
+        template: '{{ object }}'
+        title: 模板转换
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1758801804835'
+          - result
+          value_type: array[object]
+          variable: object
+        - value_selector:
+          - '1758801804835'
+          - result
+          value_type: array[object]
+          variable: content
+      height: 53
+      id: '1758849467134'
+      position:
+        x: 471.2710194567326
+        y: -30.21252925295707
+      positionAbsolute:
+        x: 471.2710194567326
+        y: -30.21252925295707
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 104.01374822841285
+      y: 269.2976838876027
+      zoom: 0.5484125104707168
